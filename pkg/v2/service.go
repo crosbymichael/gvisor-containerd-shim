@@ -302,6 +302,11 @@ func (s *service) Create(ctx context.Context, r *taskAPI.CreateTaskRequest) (_ *
 		return nil, err
 	}
 	rootfs := filepath.Join(r.Bundle, "rootfs")
+	if len(mounts) > 0 {
+		if err := os.MkdirAll(rootfs, 0711); err != nil {
+			return nil, errors.Wrap(err, "failed to create rootfs directory")
+		}
+	}
 	defer func() {
 		if err != nil {
 			if err2 := mount.UnmountAll(rootfs, 0); err2 != nil {
